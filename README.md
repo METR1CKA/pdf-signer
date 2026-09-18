@@ -18,7 +18,7 @@ sello de tinta en un papel: cualquiera puede extraerla o taparla en el PDF resul
 ## Instalación y ejecución
 
 ```bash
-cd "/Volumes/SSD EXTERNO/DEV-PROJECTS/repos/my-projects/pdf-signer"
+cd "repo/pdf-signer"
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
