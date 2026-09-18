@@ -8,6 +8,8 @@ una copia firmada. No hace falta saber coordenadas.
 ni integridad del documento. Es una imagen estampada sobre la página, igual que pegar un
 sello de tinta en un papel: cualquiera puede extraerla o taparla en el PDF resultante.
 
+![](image.tiff)
+
 ## Requisitos
 
 - Python 3.10 o superior
@@ -63,6 +65,8 @@ que no llevan firma se copian tal cual.
 - Los PDF protegidos con contraseña se rechazan, no se pide la contraseña.
 
 ## Estructura
+
+
 
 | Archivo | Contenido |
 |---|---|
