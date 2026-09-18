@@ -1,0 +1,27 @@
+# Entornos virtuales
+.venv/
+venv/
+.Python
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Logs de la app
+.logs/
+
+# Documentos de prueba y salidas firmadas
+*.pdf
+*_firmado.pdf
+!requirements.txt
+
+# IA
+.commandcode/
+
+# Editores
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
