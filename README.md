@@ -10,6 +10,25 @@ sello de tinta en un papel: cualquiera puede extraerla o taparla en el PDF resul
 
 ![](image.tiff)
 
+## Descargar
+
+Baja el binario para tu sistema desde [Releases](../../releases):
+
+| Sistema | Archivo |
+|---|---|
+| Windows | `pdf-signer-windows-amd64.exe` |
+| macOS (Apple Silicon) | `pdf-signer-macos-arm64.zip` |
+| macOS (Intel) | `pdf-signer-macos-intel.zip` |
+| Linux | `pdf-signer-linux-amd64` |
+
+- **macOS**: descomprime el zip y abre `pdf-signer.app` con clic derecho → Abrir
+  la primera vez (la app no está firmada con Apple, Gatekeeper avisará).
+- **Windows**: si SmartScreen muestra "Windows protegió tu equipo", elige
+  Más información → Ejecutar de todas formas.
+- **Linux**: da permiso de ejecución (`chmod +x pdf-signer-linux-amd64`) y
+  ejecútalo. Requiere glibc 2.35 o superior (Ubuntu 22.04, Debian 12 o más
+  recientes).
+
 ## Requisitos
 
 - Python 3.10 o superior
@@ -20,7 +39,7 @@ sello de tinta en un papel: cualquiera puede extraerla o taparla en el PDF resul
 ## Instalación y ejecución
 
 ```bash
-cd "repo/pdf-signer"
+cd pdf-signer
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -64,9 +83,22 @@ que no llevan firma se copian tal cual.
 - El zoom del preview se calcula para que la página quepa (máximo 2x); no es ajustable.
 - Los PDF protegidos con contraseña se rechazan, no se pide la contraseña.
 
+## Publicar una versión
+
+Los binarios se construyen en GitHub Actions al subir un tag:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+El workflow construye los cuatro binarios, los verifica con `--selftest`
+(estampa un PDF de prueba sin abrir ninguna ventana) y los adjunta al Release
+del tag. También puedes dispararlo manualmente (Actions → release → Run
+workflow) para probar la construcción sin publicar nada: los binarios quedan
+como artefactos del workflow.
+
 ## Estructura
-
-
 
 | Archivo | Contenido |
 |---|---|
