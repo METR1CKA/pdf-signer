@@ -14,12 +14,15 @@ sello de tinta en un papel: cualquiera puede extraerla o taparla en el PDF resul
 
 Baja el binario para tu sistema desde [Releases](../../releases):
 
-| Sistema | Archivo |
-|---|---|
-| Windows | `pdf-signer-windows-amd64.exe` |
-| macOS (Apple Silicon) | `pdf-signer-macos-arm64.zip` |
-| macOS (Intel) | `pdf-signer-macos-intel.zip` |
-| Linux | `pdf-signer-linux-amd64` |
+| Sistema               | Archivo                        |
+| --------------------- | ------------------------------ |
+| Windows               | `pdf-signer-windows-amd64.exe` |
+| macOS (Apple Silicon) | `pdf-signer-macos-arm64.zip`   |
+| macOS (Intel)         | `pdf-signer-macos-intel.zip`   |
+| Linux                 | `pdf-signer-linux-amd64`       |
+
+> Nota: para macOS deberas ejecutar en la terminal `xattr -cr /Applications/pdf-signer.app` para
+> poder ejecutar la app sin problemas.
 
 - **macOS**: descomprime el zip y abre `pdf-signer.app` con clic derecho → Abrir
   la primera vez (la app no está firmada con Apple, Gatekeeper avisará).
@@ -100,8 +103,8 @@ como artefactos del workflow.
 
 ## Estructura
 
-| Archivo | Contenido |
-|---|---|
-| `main.py` | Interfaz tkinter, preview y orquestación. |
-| `signer.py` | Cálculo de la geometría del sello y estampado con PyMuPDF. Sin interfaz. |
-| `requirements.txt` | La única dependencia, `pymupdf`. |
+| Archivo            | Contenido                                                                |
+| ------------------ | ------------------------------------------------------------------------ |
+| `main.py`          | Interfaz tkinter, preview y orquestación.                                |
+| `signer.py`        | Cálculo de la geometría del sello y estampado con PyMuPDF. Sin interfaz. |
+| `requirements.txt` | La única dependencia, `pymupdf`.                                         |
