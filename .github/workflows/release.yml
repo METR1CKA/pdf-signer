@@ -1,0 +1,84 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.asset }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            asset: pdf-signer-windows-amd64.exe
+            executable: dist/pdf-signer.exe
+          - os: macos-15
+            asset: pdf-signer-macos-arm64.zip
+            executable: dist/pdf-signer.app/Contents/MacOS/pdf-signer
+          - os: macos-15-intel
+            asset: pdf-signer-macos-intel.zip
+            executable: dist/pdf-signer.app/Contents/MacOS/pdf-signer
+          - os: ubuntu-22.04
+            asset: pdf-signer-linux-amd64
+            executable: dist/pdf-signer
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar tkinter (solo Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y python3-tk tcl tk
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Construir binario
+        run: pyinstaller pdf-signer.spec --noconfirm
+
+      - name: Verificar binario
+        shell: bash
+        run: |
+          set +e
+          "${{ matrix.executable }}" --selftest
+          code=$?
+          cat selftest.log || true
+          exit $code
+
+      - name: Preparar asset
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            ditto -c -k --keepParent dist/pdf-signer.app "${{ matrix.asset }}"
+          else
+            mv "${{ matrix.executable }}" "${{ matrix.asset }}"
+          fi
+
+      - name: Subir artefacto (lanzamiento manual)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}
+          if-no-files-found: error
+
+      - name: Publicar en el Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.asset }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
