@@ -98,6 +98,25 @@ the other and re-verify with a real stamp.
 - `fitz.Document` objects are closed when switching files and on window close, so the PDF is
   not left locked.
 
+## Packaging and releases
+
+- Binaries are built with PyInstaller from `pdf-signer.spec` by
+  `.github/workflows/release.yml`, triggered by pushing a `v*` tag. Four
+  assets: `pdf-signer-windows-amd64.exe`, `pdf-signer-macos-arm64.zip`,
+  `pdf-signer-macos-intel.zip`, `pdf-signer-linux-amd64`. `workflow_dispatch`
+  builds the same binaries as workflow artifacts without publishing a release.
+- PyInstaller is a build-time tool. Never add it to `requirements.txt`.
+- `python main.py --selftest` (also supported by the frozen binaries) stamps a
+  test PDF headlessly, verifies the stamped bbox, writes `selftest.log` in the
+  working directory, and exits 0 or 1. It never opens a window, so it is safe
+  in CI; the log exists because `--windowed` binaries have no console output.
+- macOS Intel uses the `macos-15-intel` runner label (`macos-13` was retired in
+  2025 and its jobs queue forever). GitHub drops x86_64 images in August 2027;
+  after that, remove the Intel job.
+- Keep Linux on `ubuntu-22.04` so the binary's glibc baseline stays at 2.35,
+  and macOS pinned to `macos-15`/`macos-15-intel` instead of `macos-latest`
+  (which migrated to macOS 26) for reproducible builds.
+
 ## Conventions
 
 - **UI strings are in Spanish.** Error dialogs, labels and buttons included. Code identifiers
