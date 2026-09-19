@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import tempfile
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
@@ -86,30 +87,46 @@ class PdfSignerApp:
         self._build_preview(preview)
 
     def _build_controls(self, parent: ttk.Frame) -> None:
-        ttk.Label(parent, text="PDF Signer", font=("TkDefaultFont", 15, "bold")).pack(anchor="w")
-        ttk.Label(parent, text="Sello visual de firma", foreground="#666").pack(anchor="w", pady=(0, 12))
+        ttk.Label(parent, text="PDF Signer", font=("TkDefaultFont", 15, "bold")).pack(
+            anchor="w"
+        )
+        ttk.Label(parent, text="Sello visual de firma", foreground="#666").pack(
+            anchor="w", pady=(0, 12)
+        )
 
         document_box = ttk.LabelFrame(parent, text="1. Documento", padding=8)
         document_box.pack(fill="x", pady=4)
-        ttk.Button(document_box, text="Elegir PDF…", command=self.choose_document).pack(fill="x")
-        self.document_label = ttk.Label(document_box, text="Sin documento", wraplength=240, foreground="#666")
+        ttk.Button(document_box, text="Elegir PDF…", command=self.choose_document).pack(
+            fill="x"
+        )
+        self.document_label = ttk.Label(
+            document_box, text="Sin documento", wraplength=240, foreground="#666"
+        )
         self.document_label.pack(anchor="w", pady=(6, 0))
 
         signature_box = ttk.LabelFrame(parent, text="2. Firma", padding=8)
         signature_box.pack(fill="x", pady=4)
-        ttk.Button(signature_box, text="Elegir firma…", command=self.choose_signature).pack(fill="x")
-        self.signature_label = ttk.Label(signature_box, text="Sin firma", wraplength=240, foreground="#666")
+        ttk.Button(
+            signature_box, text="Elegir firma…", command=self.choose_signature
+        ).pack(fill="x")
+        self.signature_label = ttk.Label(
+            signature_box, text="Sin firma", wraplength=240, foreground="#666"
+        )
         self.signature_label.pack(anchor="w", pady=(6, 0))
 
         page_box = ttk.LabelFrame(parent, text="3. Página", padding=8)
         page_box.pack(fill="x", pady=4)
         navigation = ttk.Frame(page_box)
         navigation.pack(fill="x")
-        self.previous_button = ttk.Button(navigation, text="◀", width=4, command=self.previous_page)
+        self.previous_button = ttk.Button(
+            navigation, text="◀", width=4, command=self.previous_page
+        )
         self.previous_button.pack(side="left")
         self.page_label = ttk.Label(navigation, text="– / –", anchor="center")
         self.page_label.pack(side="left", fill="x", expand=True)
-        self.next_button = ttk.Button(navigation, text="▶", width=4, command=self.next_page)
+        self.next_button = ttk.Button(
+            navigation, text="▶", width=4, command=self.next_page
+        )
         self.next_button.pack(side="right")
 
         size_box = ttk.LabelFrame(parent, text="4. Tamaño de la firma", padding=8)
@@ -126,18 +143,26 @@ class PdfSignerApp:
 
         output_box = ttk.LabelFrame(parent, text="5. Guardar en", padding=8)
         output_box.pack(fill="x", pady=4)
-        ttk.Button(output_box, text="Elegir destino…", command=self.choose_output).pack(fill="x")
-        self.output_label = ttk.Label(output_box, text="Sin destino", wraplength=240, foreground="#666")
+        ttk.Button(output_box, text="Elegir destino…", command=self.choose_output).pack(
+            fill="x"
+        )
+        self.output_label = ttk.Label(
+            output_box, text="Sin destino", wraplength=240, foreground="#666"
+        )
         self.output_label.pack(anchor="w", pady=(6, 0))
 
         self.sign_button = ttk.Button(parent, text="Firmar", command=self.sign)
         self.sign_button.pack(fill="x", pady=(14, 4), ipady=6)
 
-        self.status_label = ttk.Label(parent, text="", wraplength=240, foreground="#666")
+        self.status_label = ttk.Label(
+            parent, text="", wraplength=240, foreground="#666"
+        )
         self.status_label.pack(anchor="w", pady=(6, 0))
 
     def _build_preview(self, parent: ttk.Frame) -> None:
-        ttk.Label(parent, text="Click en la página para colocar la firma").pack(anchor="w", pady=(0, 6))
+        ttk.Label(parent, text="Click en la página para colocar la firma").pack(
+            anchor="w", pady=(0, 6)
+        )
 
         frame = ttk.Frame(parent)
         frame.pack(fill="both", expand=True)
@@ -151,8 +176,12 @@ class PdfSignerApp:
             highlightbackground="#bbb",
         )
         vertical = ttk.Scrollbar(frame, orient="vertical", command=self.canvas.yview)
-        horizontal = ttk.Scrollbar(frame, orient="horizontal", command=self.canvas.xview)
-        self.canvas.configure(yscrollcommand=vertical.set, xscrollcommand=horizontal.set)
+        horizontal = ttk.Scrollbar(
+            frame, orient="horizontal", command=self.canvas.xview
+        )
+        self.canvas.configure(
+            yscrollcommand=vertical.set, xscrollcommand=horizontal.set
+        )
 
         self.canvas.grid(row=0, column=0, sticky="nsew")
         vertical.grid(row=0, column=1, sticky="ns")
@@ -165,7 +194,9 @@ class PdfSignerApp:
     # Selección de archivos
 
     def choose_document(self) -> None:
-        path = filedialog.askopenfilename(title="Elegir documento PDF", filetypes=PDF_FILETYPES)
+        path = filedialog.askopenfilename(
+            title="Elegir documento PDF", filetypes=PDF_FILETYPES
+        )
         if not path:
             return
 
@@ -189,13 +220,17 @@ class PdfSignerApp:
 
         stem = os.path.splitext(os.path.basename(path))[0]
         self.output_path = os.path.join(os.path.dirname(path), f"{stem}_firmado.pdf")
-        self.output_label.configure(text=os.path.basename(self.output_path), foreground="#000")
+        self.output_label.configure(
+            text=os.path.basename(self.output_path), foreground="#000"
+        )
 
         self.render_page()
         self._update_sign_state()
 
     def choose_signature(self) -> None:
-        path = filedialog.askopenfilename(title="Elegir firma", filetypes=SIGNATURE_FILETYPES)
+        path = filedialog.askopenfilename(
+            title="Elegir firma", filetypes=SIGNATURE_FILETYPES
+        )
         if not path:
             return
 
@@ -219,8 +254,12 @@ class PdfSignerApp:
         self._update_sign_state()
 
     def choose_output(self) -> None:
-        initial_directory = os.path.dirname(self.output_path or self.document_path or "") or None
-        initial_file = os.path.basename(self.output_path) if self.output_path else "firmado.pdf"
+        initial_directory = (
+            os.path.dirname(self.output_path or self.document_path or "") or None
+        )
+        initial_file = (
+            os.path.basename(self.output_path) if self.output_path else "firmado.pdf"
+        )
 
         path = filedialog.asksaveasfilename(
             title="Guardar documento firmado",
@@ -279,10 +318,16 @@ class PdfSignerApp:
         self.canvas.create_image(0, 0, anchor="nw", image=self.page_photo, tags="page")
         self.canvas.configure(scrollregion=(0, 0, pixmap.width, pixmap.height))
 
-        self.page_label.configure(text=f"{self.page_index + 1} / {self.document.page_count}")
-        self.previous_button.state(["!disabled"] if self.page_index > 0 else ["disabled"])
+        self.page_label.configure(
+            text=f"{self.page_index + 1} / {self.document.page_count}"
+        )
+        self.previous_button.state(
+            ["!disabled"] if self.page_index > 0 else ["disabled"]
+        )
         last_page = self.document.page_count - 1
-        self.next_button.state(["!disabled"] if self.page_index < last_page else ["disabled"])
+        self.next_button.state(
+            ["!disabled"] if self.page_index < last_page else ["disabled"]
+        )
 
         self.draw_overlay()
 
@@ -323,7 +368,9 @@ class PdfSignerApp:
                 x0, y0, anchor="nw", image=self.signature_photo, tags="overlay"
             )
 
-        self.canvas.create_rectangle(x0, y0, x1, y1, outline="#1f6feb", width=2, tags="overlay")
+        self.canvas.create_rectangle(
+            x0, y0, x1, y1, outline="#1f6feb", width=2, tags="overlay"
+        )
 
     def _render_signature(self, width_px: int, height_px: int) -> tk.PhotoImage | None:
         if not self.signature_path or width_px < 1 or height_px < 1:
@@ -333,7 +380,9 @@ class PdfSignerApp:
         try:
             document = fitz.open(self.signature_path)
             page = document[0]
-            matrix = fitz.Matrix(width_px / page.rect.width, height_px / page.rect.height)
+            matrix = fitz.Matrix(
+                width_px / page.rect.width, height_px / page.rect.height
+            )
             pixmap = page.get_pixmap(matrix=matrix, alpha=True)
             return tk.PhotoImage(data=pixmap.tobytes("png"))
         except Exception:
@@ -368,7 +417,9 @@ class PdfSignerApp:
     # Firmado
 
     def _update_sign_state(self) -> None:
-        ready = bool(self.document and self.signature_path and self.clicks and self.output_path)
+        ready = bool(
+            self.document and self.signature_path and self.clicks and self.output_path
+        )
         self.sign_button.state(["!disabled"] if ready else ["disabled"])
 
         if not self.document:
@@ -376,15 +427,26 @@ class PdfSignerApp:
         elif not self.signature_path:
             self.status_label.configure(text="Elige la imagen o el PDF de la firma.")
         elif not self.clicks:
-            self.status_label.configure(text="Haz click en la página donde va la firma.")
+            self.status_label.configure(
+                text="Haz click en la página donde va la firma."
+            )
         elif not self.output_path:
-            self.status_label.configure(text="Elige dónde guardar el documento firmado.")
+            self.status_label.configure(
+                text="Elige dónde guardar el documento firmado."
+            )
         else:
             page_number = (self.last_placed_page or 0) + 1
-            self.status_label.configure(text=f"Listo para firmar en la página {page_number}.")
+            self.status_label.configure(
+                text=f"Listo para firmar en la página {page_number}."
+            )
 
     def sign(self) -> None:
-        if not (self.document and self.document_path and self.signature_path and self.output_path):
+        if not (
+            self.document
+            and self.document_path
+            and self.signature_path
+            and self.output_path
+        ):
             return
 
         if self.last_placed_page is None or self.last_placed_page not in self.clicks:
@@ -395,7 +457,9 @@ class PdfSignerApp:
             return
 
         if os.path.splitext(self.output_path)[1].lower() != ".pdf":
-            messagebox.showerror("Destino no válido", "El archivo de destino debe tener extensión .pdf.")
+            messagebox.showerror(
+                "Destino no válido", "El archivo de destino debe tener extensión .pdf."
+            )
             return
 
         source = os.path.normcase(os.path.realpath(self.document_path))
@@ -429,7 +493,9 @@ class PdfSignerApp:
             )
             return
         except OSError as error:
-            messagebox.showerror("No se pudo guardar", f"Error al escribir el archivo:\n{error}")
+            messagebox.showerror(
+                "No se pudo guardar", f"Error al escribir el archivo:\n{error}"
+            )
             return
         except Exception as error:
             # PyMuPDF no usa OSError: los fallos de escritura llegan como FzErrorSystem.
@@ -458,7 +524,78 @@ class PdfSignerApp:
         self.root.destroy()
 
 
+def selftest() -> int:
+    """Estampa un PDF de prueba sin abrir la GUI y escribe selftest.log.
+
+    Los binarios --windowed no tienen consola: el log es la única salida
+    visible cuando algo falla en CI.
+    """
+    try:
+        with tempfile.TemporaryDirectory() as folder:
+            document_path = os.path.join(folder, "documento.pdf")
+            signature_path = os.path.join(folder, "firma.png")
+            output_path = os.path.join(folder, "firmado.pdf")
+
+            document = fitz.open()
+            page = document.new_page(width=595, height=842)
+            page.insert_text((72, 100), "documento de prueba")
+            document.save(document_path)
+            document.close()
+
+            fitz.Pixmap(fitz.csRGB, fitz.IRect(0, 0, 240, 80)).save(signature_path)
+
+            center_x, center_y = 200.0, 600.0
+            stamp_signature(
+                document_path=document_path,
+                signature_path=signature_path,
+                output_path=output_path,
+                page_index=0,
+                center_x=center_x,
+                center_y=center_y,
+                size="M",
+            )
+
+            result = open_pdf(output_path)
+            try:
+                if result.page_count != 1:
+                    raise ValueError(
+                        f"El documento firmado tiene {result.page_count} páginas."
+                    )
+                images = result[0].get_image_info()
+                if not images:
+                    raise ValueError(
+                        "La página firmada no contiene la imagen de la firma."
+                    )
+                x0, y0, x1, y1 = images[0]["bbox"]
+                stamped_x = (x0 + x1) / 2
+                stamped_y = (y0 + y1) / 2
+                expected_y = 842.0 - center_y
+                if abs(stamped_x - center_x) > 1.0 or abs(stamped_y - expected_y) > 1.0:
+                    raise ValueError(
+                        f"La firma quedó centrada en ({stamped_x}, {stamped_y}) "
+                        f"en vez de ({center_x}, {expected_y})."
+                    )
+            finally:
+                result.close()
+
+        message = "SELFTEST OK"
+        code = 0
+    except Exception as error:
+        message = f"SELFTEST FAIL: {error}"
+        code = 1
+
+    print(message)
+    try:
+        with open("selftest.log", "w", encoding="utf-8") as log:
+            log.write(message + "\n")
+    except OSError:
+        pass
+    return code
+
+
 def main() -> None:
+    if "--selftest" in sys.argv[1:]:
+        sys.exit(selftest())
     root = tk.Tk()
     PdfSignerApp(root)
     root.mainloop()
